@@ -1,0 +1,8 @@
+{
+    "appService.defaultWebAppToDeploy": "undefined/subscriptions/1a0b9fd8-ed58-4e35-bfe4-cf50d11415ff/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/Baoboox",
+    "appService.deploySubpath": ".",
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ]
+}
