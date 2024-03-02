@@ -1,6 +1,6 @@
 async function getUserInfo(accessToken) {
   try {
-    const response = await fetch('https://dev-3bvkk0hsrquz68yn.us.auth0.com/userinfo', {
+    const response = await fetch(`${process.env.issuerBaseURL}userinfo`, {
       method: "GET",
       headers: {
         'Authorization': `Bearer ${accessToken}`

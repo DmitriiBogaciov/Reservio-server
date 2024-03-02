@@ -8,9 +8,7 @@ var mongoose = require('mongoose');
 var dbConnet = require('./config/db-connection');
 require('dotenv').config();
 
-const bookRouter = require("./api/controllers/book-controller")
 const userRouter = require("./api/controllers/user-controller")
-const blobRouter = require("./api/controllers/blob-controller")
 
 var indexRouter = require('./routes/index');
 // var usersRouter = require('./routes/users');
@@ -32,9 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 // app.use('/users', usersRouter);
-app.use('/book', bookRouter);
 app.use('/user', userRouter);
-app.use('/blob', blobRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

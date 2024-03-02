@@ -1,8 +1,8 @@
 const { auth } = require('express-oauth2-jwt-bearer');
 
 const jwtCheck = auth({
-    audience: 'https://book-app/api',
-    issuerBaseURL: 'https://dev-3bvkk0hsrquz68yn.us.auth0.com/',
+    audience: process.env.audience,
+    issuerBaseURL: process.env.issuerBaseURL,
     tokenSigningAlg: 'RS256'
 });
 
