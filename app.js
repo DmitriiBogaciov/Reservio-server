@@ -10,6 +10,7 @@ require('dotenv').config();
 
 const userRouter = require("./api/controllers/user-controller");
 const placeRouter = require("./api/controllers/place-controller");
+const workspaceRouter = require("./api/controllers/workspace-controller");
 
 var indexRouter = require('./routes/index');
 // var usersRouter = require('./routes/users');
@@ -33,6 +34,7 @@ app.use('/', indexRouter);
 // app.use('/users', usersRouter);
 app.use('/user', userRouter);
 app.use('/place', placeRouter);
+app.use('/workspace', workspaceRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
