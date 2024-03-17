@@ -11,6 +11,8 @@ require('dotenv').config();
 const userRouter = require("./api/controllers/user-controller");
 const placeRouter = require("./api/controllers/place-controller");
 const workspaceRouter = require("./api/controllers/workspace-controller");
+const reservationRouter = require("./api/controllers/reservation-controller");
+const IoTNodeRouter = require("./api/controllers/IoTNode-controller");
 
 var indexRouter = require('./routes/index');
 // var usersRouter = require('./routes/users');
@@ -35,6 +37,7 @@ app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/place', placeRouter);
 app.use('/workspace', workspaceRouter);
+app.use('/iotnode', IoTNodeRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
