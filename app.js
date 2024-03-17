@@ -37,6 +37,7 @@ app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/place', placeRouter);
 app.use('/workspace', workspaceRouter);
+app.use('/reservation', reservationRouter);
 app.use('/iotnode', IoTNodeRouter);
 
 // catch 404 and forward to error handler
