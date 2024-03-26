@@ -1,17 +1,17 @@
 const Ajv = require("ajv");
 const addFormats = require("ajv-formats");
-const PlaceSchema = require("../../api/validation-types/place-types");
-const PlaceDao = require("../../dao/place-dao");
-const dao = new PlaceDao();
+const ReservationSchema = require("../../api/validation-types/reservation-types");
+const ReservationDao = require('../../dao/reservation-dao');
+const dao = new ReservationDao();
 
 const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
 
-const validate = ajv.compile(PlaceSchema.createDtoInType)
+const validate = ajv.compile(ReservationSchema.createDtoInType)
 
-async function CreateAbl(placeData, owner) {
+async function CreateAbl(reservationData, user) {
     try {
-        const valid = validate(placeData);
+        const valid = validate(reservationData);
         if (!valid) {
             const errorMessages = validate.errors.map(err => `${err.instancePath} ${err.message}`).join(', ');
             const error = new Error(`Validation failed: ${errorMessages}`);
@@ -19,13 +19,14 @@ async function CreateAbl(placeData, owner) {
             throw error;
         }
 
-        const data = {
-            ...placeData,
-            "owner": owner
+        const newReservation = {
+            ...reservationData,
+            "user": user,
+            "activate": false
         }
 
-        const newPlace = await dao.Create(data);
-        return newPlace;
+        const result = await dao.Create(newReservation);
+        return result;
 
     } catch (error) {
         error.status = error.status || 500;

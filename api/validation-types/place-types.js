@@ -1,5 +1,3 @@
-const { name } = require("ejs");
-
 module.exports = {
     createDtoInType: {
         type: "object",
@@ -14,15 +12,12 @@ module.exports = {
         properties: {
             name: { type: "string", minLength: 1, maxLength: 100 },
             description: { type: "string", minLength: 1, maxLength: 1000 },
-            images: {
-                type: "array",
-                items: { type: "string" }
-            },
+            image: { type: "string", minLength: 1, maxLength: 1000 },
             address: { type: "string" },
             owner: { type: "string" },
-            category: { type: "string" },
-            openingTime: { type: "string", pattern: "^(?:[01]\\d|2[0-3]):[0-5]\\d$" },
-            closingTime: { type: "string", pattern: "^(?:[01]\\d|2[0-3]):[0-5]\\d$" }
+            category: { type: "array", items: { type: "string" }},
+            openingTime: { type: "string", format: "date-time" },
+            closingTime: { type: "string", format: "date-time" }
         },
         required: []
     }

@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
 var dbConnet = require('./config/db-connection');
+var cron = require('node-cron');
 require('dotenv').config();
 
 const userRouter = require("./api/controllers/user-controller");
@@ -73,6 +74,10 @@ db.once('open', function () {
   console.log('Connected to the database');
 });
 
+//This function updates workspace state and changes IoTNode led color
+cron.schedule('* * * * *', () => {
+  console.log('running a task every minute');
+});
 
 
 module.exports = app;

@@ -7,9 +7,9 @@ const dao = new PlaceDao();
 const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
 
-const validate = ajv.compile(PlaceSchema.createDtoInType)
+const validate = ajv.compile(PlaceSchema.updateDtoInType);
 
-async function CreateAbl(placeData, owner) {
+async function UpdateOneAbl(id, placeData) {
     try {
         const valid = validate(placeData);
         if (!valid) {
@@ -19,13 +19,10 @@ async function CreateAbl(placeData, owner) {
             throw error;
         }
 
-        const data = {
-            ...placeData,
-            "owner": owner
-        }
+        const place = await dao.FindOne(id);
 
-        const newPlace = await dao.Create(data);
-        return newPlace;
+        const result = await dao.UpdateOne(id, placeData);
+        return result;
 
     } catch (error) {
         error.status = error.status || 500;
@@ -33,4 +30,4 @@ async function CreateAbl(placeData, owner) {
     }
 }
 
-module.exports = CreateAbl;
+module.exports = UpdateOneAbl;
