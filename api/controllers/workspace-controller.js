@@ -12,10 +12,10 @@ const router = express.Router();
 
 router.post("/state", async (req, res, next) => {
   try {
-    if(req.body.state == 1){
+    if(req.body.event == "call"){
         res.status(200).send(get_response("Call the receptionist", 200));
-    } else if(req.body.state == 2){
-        res.status(200).send(get_response("The reservation wass extended", 200));
+    } else if(req.body.event == "extend"){
+        res.status(200).send(get_response("The reservation was extended", 200));
     }
   } catch (error) {
     next(error);
