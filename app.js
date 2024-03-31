@@ -77,10 +77,9 @@ db.once('open', function () {
 });
 
 //This function updates workspace state and changes IoTNode led color
-cron.schedule('* * * * *', () => {
-  console.log('running a task every minute');
-  UpdateIndicatorAt00();
-});
+// cron.schedule('*/10 * * * * *', () => {
+//   UpdateIndicatorAt00();
+// });
 
 
 module.exports = app;

@@ -28,11 +28,11 @@ router.post("/state", async (req, res, next) => {
 
 router.post("/create", async (req, res, next) => {
   try {
-    const accessToken = req.headers.authorization.split(" ")[1];
-    const user = await getUserInfo(accessToken);
+    // const accessToken = req.headers.authorization.split(" ")[1];
+    // const user = await getUserInfo(accessToken);
     const reservationDate = req.body;
 
-    const newReservation = await CreateAbl(reservationDate, user.sub);
+    const newReservation = await CreateAbl(reservationDate);
 
     res.status(201).send(get_response("Reservation created", 201, newReservation));
   } catch (error) {

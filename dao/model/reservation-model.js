@@ -4,10 +4,13 @@ const Schema = mongoose.Schema;
 const reservationSchema = new Schema({
     user: {
         type: String,
+        index: true,
         required: true
     },
     workspace: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Workspace',
+        index: true,
         required: true
     },
     name: {
@@ -16,10 +19,12 @@ const reservationSchema = new Schema({
     },
     startTime: {
         type: Date,
+        index: true,
         required: true
     },
     endTime: {
         type: Date,
+        index: true,
         required: true
     },
     activate: {

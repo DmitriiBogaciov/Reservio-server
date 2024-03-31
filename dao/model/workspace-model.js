@@ -3,8 +3,10 @@ const Schema = mongoose.Schema;
 
 const workspaceSchema = new Schema({
     placeId: {
-        type: String,
-        required: true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Place',
+        required: true,
+        index: true
     },
     description: {
         type: String,
@@ -26,7 +28,9 @@ const workspaceSchema = new Schema({
         required: false
     },
     IoTNodeId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'IoTNode',
+        index: true,
         required: false
     },
     qr_value: {

@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const IoTNodeSchema = new Schema({
     deviceId: {
         type: String,
+        index: true,
         required: true
     },
     sharedAccessKey: {

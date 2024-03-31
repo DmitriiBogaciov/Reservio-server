@@ -12,11 +12,13 @@ const placeSchema = new Schema({
     },
     owner: {
         type: String,
-        required: true
+        required: true,
+        index: true
     },
     category: {
         type: String,
-        required: false
+        required: false,
+        index: true
     },
     image: {
         type: String,
@@ -28,11 +30,13 @@ const placeSchema = new Schema({
     },
     openingTime: {
         type: Date,
-        required: false
+        required: false,
+        index: true
     },
     closingTime: {
         type: Date,
-        required: false
+        required: false,
+        index: true
     }
 }, { timestamps: true });
 

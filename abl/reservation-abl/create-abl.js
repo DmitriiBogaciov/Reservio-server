@@ -21,7 +21,6 @@ async function CreateAbl(reservationData, user) {
 
         const newReservation = {
             ...reservationData,
-            "user": user,
             "activate": false
         }
 
