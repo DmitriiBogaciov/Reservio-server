@@ -1,4 +1,4 @@
-const Place = require('./model/place-model');
+const IoTNode = require('./model/IoTNode-model');
 require('dotenv').config();
 
 class PlaceDao {
@@ -24,20 +24,20 @@ class PlaceDao {
     //     }
     // };
 
-    // async Find(filter, projection, options) {
-    //     try {
-    //         const result = await Place.find(filter, projection, options);
-    //         if (result.length === 0) {
-    //             const error = new Error("Didn't find any place");
-    //             error.status = 404;
-    //             throw error;
-    //         }
+    async Find(filter, projection, options) {
+        try {
+            const result = await IoTNode.find(filter, projection, options);
+            if (result.length === 0) {
+                const error = new Error("Didn't find any IoTNode");
+                error.status = 404;
+                throw error;
+            }
 
-    //         return result;
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // };
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    };
 
     // async FindOne(id) {
     //     try {

@@ -15,6 +15,8 @@ const workspaceRouter = require("./api/controllers/workspace-controller");
 const reservationRouter = require("./api/controllers/reservation-controller");
 const IoTNodeRouter = require("./api/controllers/IoTNode-controller");
 
+const UpdateIndicatorAt00 = require("./abl/Automation/update-indicator-00")
+
 var indexRouter = require('./routes/index');
 // var usersRouter = require('./routes/users');
 
@@ -77,6 +79,7 @@ db.once('open', function () {
 //This function updates workspace state and changes IoTNode led color
 cron.schedule('* * * * *', () => {
   console.log('running a task every minute');
+  UpdateIndicatorAt00();
 });
 
 
