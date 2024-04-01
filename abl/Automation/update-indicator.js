@@ -1,15 +1,18 @@
 const Workspace = require("../../dao/model/workspace-model");
+const CheckNextReservation = require("./check-next-reservation")
 const SetLedState = require("../IoTNode-abl/set-led-state-abl")
 
-async function UpdateAt00() {
+async function UpdateIndicator() {
     try {
         //resive current hour
         const currentHour = new Date();
-        currentHour.setMinutes(0,0,0);
+        currentHour.setMinutes(0, 0, 0);
+
+        const currentMinutes = new Date().getMinutes();
         const nextHour = new Date(currentHour);
         nextHour.setHours(currentHour.getHours() + 1);
 
-        const workspacesWithReservations = await Workspace.aggregate([
+        const workspacesWithReservationsAggregate = await Workspace.aggregate([
             {
                 $match: {
                     IoTNodeId: { $exists: true, $ne: null }
@@ -76,16 +79,41 @@ async function UpdateAt00() {
             }
         ]);
 
-        for (const workspace of workspacesWithReservations) {
-            // Отправляем команду на обновление цвета индикатора на IoT устройстве
+        const workspacesWithCurrentReservations = [];
+        const workspacesWithoutReservations = [];
+
+        for (const workspace of workspacesWithReservationsAggregate) {
+            if (workspace.status === 'green') {
+                workspacesWithoutReservations.push(workspace);
+                console.log("There is a workspace without current reservation")
+            } else {
+                workspacesWithCurrentReservations.push(workspace);
+            }
+        }
+
+        let workspacesWithNextReservations = [];
+        let allWorkspacesToUpdate = [];
+
+        if (currentMinutes > 30) {
+            workspacesWithNextReservations = await CheckNextReservation(workspacesWithoutReservations);
+            allWorkspacesToUpdate = workspacesWithCurrentReservations.concat(workspacesWithNextReservations);
+            console.log("Without reesrvation", allWorkspacesToUpdate)
+        } else {
+            allWorkspacesToUpdate = workspacesWithCurrentReservations.concat(workspacesWithoutReservations);
+            console.log(allWorkspacesToUpdate)
+        }
+
+        for (const workspace of allWorkspacesToUpdate) {
             await SetLedState(workspace.deviceId, { state: workspace.status });
         }
 
-        return workspacesWithReservations;
+        return {
+            allWorkspacesToUpdate
+        };
 
     } catch (error) {
         console.error("Error updating workspace indicators:", error);
     }
 }
 
-module.exports = UpdateAt00;
+module.exports = UpdateIndicator;

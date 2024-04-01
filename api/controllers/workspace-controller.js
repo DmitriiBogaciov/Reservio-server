@@ -7,7 +7,7 @@ const UpdateOneAbl = require('../../abl/workspace-abl/update-one-abl');
 const FindAbl = require('../../abl/workspace-abl/find-abl');
 const FindOneAbl = require('../../abl/workspace-abl/find-one-abl');
 const DeleteOneAbl = require('../../abl/workspace-abl/delete-one-abl');
-const UpdateAt00 = require('../../abl/Automation/update-indicator-00')
+const UpdateIndicator = require('../../abl/Automation/update-indicator')
 
 const router = express.Router();
 
@@ -86,7 +86,7 @@ router.delete("/deleteOne/:id", async (req, res, next) => {
 
 router.get("/updateAt00", async (req, res, next) => {
   try {
-    const result = await UpdateAt00();
+    const result = await UpdateIndicator();
 
     res.status(200).send(get_response("Indicators updated", 200, result));
   } catch (error) {

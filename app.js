@@ -15,7 +15,7 @@ const workspaceRouter = require("./api/controllers/workspace-controller");
 const reservationRouter = require("./api/controllers/reservation-controller");
 const IoTNodeRouter = require("./api/controllers/IoTNode-controller");
 
-const UpdateIndicatorAt00 = require("./abl/Automation/update-indicator-00")
+const UpdateIndicator = require("./abl/Automation/update-indicator")
 
 var indexRouter = require('./routes/index');
 // var usersRouter = require('./routes/users');
