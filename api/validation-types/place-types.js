@@ -15,7 +15,8 @@ module.exports = {
             image: { type: "string", minLength: 1, maxLength: 1000 },
             address: { type: "string" },
             owner: { type: "string" },
-            category: { type: "array", items: { type: "string" }},
+            category: { type: "string", minLength: 1, maxLength: 1000 },
+            features: { type: "array", items: { type: "string" }},
             openingTime: { type: "string", format: "date-time" },
             closingTime: { type: "string", format: "date-time" }
         },

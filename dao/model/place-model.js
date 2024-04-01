@@ -28,6 +28,13 @@ const placeSchema = new Schema({
         type: String,
         required: true
     },
+    features: {
+        type: [{
+            type: String,
+            required: true
+        }],
+        required: false
+    },
     openingTime: {
         type: Date,
         required: false,
