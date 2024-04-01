@@ -1,5 +1,4 @@
 const Workspace = require('./model/workspace-model');
-require('dotenv').config();
 
 class WorkspaceDao {
     async Create(data) {

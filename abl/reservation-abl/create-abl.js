@@ -21,7 +21,7 @@ async function CreateAbl(reservationData, user) {
 
         const newReservation = {
             ...reservationData,
-            "activate": false
+            "active": false
         }
 
         const result = await dao.Create(newReservation);

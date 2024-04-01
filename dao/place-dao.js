@@ -1,5 +1,4 @@
 const Place = require('./model/place-model');
-require('dotenv').config();
 
 class PlaceDao {
     async Create(data) {

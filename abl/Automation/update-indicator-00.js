@@ -1,9 +1,7 @@
-const WorkspaceDao = require("../../dao/workspace-dao");
-const wDao = new WorkspaceDao();
-const ReservationDao = require("../../dao/reservation-dao");
-const rDao = new ReservationDao();
+const Workspace = require("../../dao/model/workspace-model");
+const SetLedState = require("../IoTNode-abl/set-led-state-abl")
 
-async function Update00() {
+async function UpdateAt00() {
     try {
         //resive current hour
         const currentHour = new Date();
@@ -11,20 +9,83 @@ async function Update00() {
         const nextHour = new Date(currentHour);
         nextHour.setHours(currentHour.getHours() + 1);
 
-        const workspaces = await wDao.Find({ IoTNodeId : { $exists: true, $ne: null }});
+        const workspacesWithReservations = await Workspace.aggregate([
+            {
+                $match: {
+                    IoTNodeId: { $exists: true, $ne: null }
+                }
+            },
+            {
+                $lookup: {
+                    from: 'iotnodes', // Название коллекции IoT устройств
+                    localField: 'IoTNodeId',
+                    foreignField: '_id',
+                    as: 'iotnode'
+                }
+            },
+            {
+                $unwind: '$iotnode' // Преобразуем массив iotnode в отдельные документы
+            },
+            {
+                $addFields: {
+                    deviceId: '$iotnode.deviceId' // Добавляем deviceId из документа IoTNode к каждому рабочему месту
+                }
+            },
+            {
+                $lookup: {
+                    from: 'reservations',
+                    let: { workspaceId: '$_id', currentHour: currentHour, nextHour: nextHour },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ['$workspace', '$$workspaceId'] },
+                                        { $lt: ['$startTime', '$$nextHour'] },
+                                        { $gte: ['$endTime', '$$currentHour'] }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            $project: {
+                                _id: 1,
+                                active: 1 // Предполагается, что поле active указывает на статус резервации
+                            }
+                        }
+                    ],
+                    as: 'currentReservations'
+                }
+            },
+            {
+                $addFields: {
+                    status: {
+                        $cond: {
+                            if: { $eq: [{ $size: "$currentReservations" }, 0] },
+                            then: 'green', // нет текущих резерваций
+                            else: {
+                                $cond: {
+                                    if: { $anyElementTrue: "$currentReservations.active" },
+                                    then: 'blue', // есть активная резервация
+                                    else: 'red' // резервация есть, но она неактивна
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ]);
 
-        const workspaceIds = workspaces.map(workspace => workspace._id);
+        for (const workspace of workspacesWithReservations) {
+            // Отправляем команду на обновление цвета индикатора на IoT устройстве
+            await SetLedState(workspace.deviceId, { state: workspace.status });
+        }
 
-        const reservations = await rDao.Find({
-            workspace: { $in: workspaceIds },
-            startTime: { $lt: nextHour },
-            endTime: { $gte: currentHour }
-
-        })
+        return workspacesWithReservations;
 
     } catch (error) {
         console.error("Error updating workspace indicators:", error);
     }
 }
 
-module.exports = Update00;
+module.exports = UpdateAt00;

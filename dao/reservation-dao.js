@@ -1,5 +1,4 @@
 const Reservation = require('./model/reservation-model');
-require('dotenv').config();
 
 class ReservationDao {
     async Create(data) {

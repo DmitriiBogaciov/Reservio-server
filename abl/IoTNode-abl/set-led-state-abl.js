@@ -9,7 +9,14 @@ async function SetLedState(targetDevice, state){
         await serviceClient.open();
         console.log('Client connected');
 
-        const data = JSON.stringify(state);
+        console.log(state)
+
+        dtoin = {
+            ...state,
+            topic: "node/demo:0/led/-/state/set"
+        }
+
+        const data = JSON.stringify(dtoin);
         const message = new Message(data);
         console.log('Sending message: ' + message.getData());
 

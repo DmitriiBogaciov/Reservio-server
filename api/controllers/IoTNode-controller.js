@@ -13,7 +13,7 @@ router.post("/set/state", async (req, res, next) => {
   try {
     const result = await SetLedState("Workspace1", req.body);
 
-    res.status(200).send(get_response("IoTNode status updated", 201, result))
+    res.status(200).send(get_response("IoTNode state updated", 201, result))
   } catch (error) {
     next(error);
   } 

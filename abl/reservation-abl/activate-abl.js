@@ -21,11 +21,11 @@ async function ActivateAbl(id, state) {
 
         const reservation = await dao.FindOne(id);
 
-        let activateValue = state === "activate" ? true : false;
+        let activeValue = state === "active" ? true : false;
 
 
         data = {
-            activate: activateValue
+            active: activeValue
         }
 
         const result = await dao.UpdateOne(id, data);

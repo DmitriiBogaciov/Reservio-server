@@ -1,5 +1,4 @@
 const IoTNode = require('./model/IoTNode-model');
-require('dotenv').config();
 
 class PlaceDao {
     async Create(data) {

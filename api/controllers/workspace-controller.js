@@ -7,6 +7,7 @@ const UpdateOneAbl = require('../../abl/workspace-abl/update-one-abl');
 const FindAbl = require('../../abl/workspace-abl/find-abl');
 const FindOneAbl = require('../../abl/workspace-abl/find-one-abl');
 const DeleteOneAbl = require('../../abl/workspace-abl/delete-one-abl');
+const UpdateAt00 = require('../../abl/Automation/update-indicator-00')
 
 const router = express.Router();
 
@@ -41,7 +42,7 @@ router.post("/updateOne/:id", async (req, res, next) => {
 
     const updatedWorkspace = await UpdateOneAbl(id, updateData);
 
-    res.status(200).send(get_response("Reservation updated", 200, updatedWorkspace));
+    res.status(200).send(get_response("Workspace updated", 200, updatedWorkspace));
   } catch (error) {
     next(error);
   }
@@ -78,6 +79,16 @@ router.delete("/deleteOne/:id", async (req, res, next) => {
     const result = await DeleteOneAbl(id);
 
     res.status(200).send(get_response("Workspace deleted", 200, result));
+  } catch (error) {
+    next(error);
+  }
+})
+
+router.get("/updateAt00", async (req, res, next) => {
+  try {
+    const result = await UpdateAt00();
+
+    res.status(200).send(get_response("Indicators updated", 200, result));
   } catch (error) {
     next(error);
   }

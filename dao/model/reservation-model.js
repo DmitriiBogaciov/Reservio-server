@@ -27,7 +27,7 @@ const reservationSchema = new Schema({
         index: true,
         required: true
     },
-    activate: {
+    active: {
         type: Boolean,
         required: true
     }

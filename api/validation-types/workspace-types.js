@@ -19,6 +19,7 @@ module.exports = {
             qr_value: { type: "string", minLength: 1, maxLength: 1000 },
             state: { type: "string", enum: ["free", "reserved", "occupied"] }
         },
-        required: []
+        required: [],
+        additionalProperties: false
     }
 }

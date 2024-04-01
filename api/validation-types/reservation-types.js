@@ -17,7 +17,7 @@ module.exports = {
             workspace: { type: "string", minLength: 1, maxLength: 100 },
             startTime: { type: "string", format: "date-time" },
             endTime: { type: "string", format: "date-time" },
-            activate: { type: "boolean" }
+            active: { type: "boolean" }
         },
         required: [],
         additionalProperties: false
