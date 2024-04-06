@@ -30,9 +30,9 @@ router.post("/create", async (req, res, next) => {
   try {
     // const accessToken = req.headers.authorization.split(" ")[1];
     // const user = await getUserInfo(accessToken);
-    const reservationDate = req.body;
+    const reservationData = req.body;
 
-    const newReservation = await CreateAbl(reservationDate);
+    const newReservation = await CreateAbl(reservationData);
 
     res.status(201).send(get_response("Reservation created", 201, newReservation));
   } catch (error) {
@@ -40,16 +40,12 @@ router.post("/create", async (req, res, next) => {
   }
 })
 
-router.post("/activate/:id/:state", async (req, res, next) => {
+router.post("/activate/", async (req, res, next) => {
   try {
-    const id = req.params.id;
-    const state = req.params.state;
-    const activatedReservation = await ActivateAbl(id, state);
-    if(state === 'activate'){
-      res.status(200).send(get_response("Reservation activated", 200, activatedReservation));
-    } else {
-      res.status(200).send(get_response("Reservation deactivated", 200, activatedReservation));
-    }
+    const data = req.body;
+    const result = await ActivateAbl(data.password, data.workspace);
+    
+    res.status(200).send(get_response("Reservation actiovated successfully", 200, result));
   } catch (error) {
     next(error);
   }

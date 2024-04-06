@@ -13,13 +13,13 @@ const DeleteOneAbl = require('../../abl/place-abl/delete-one-abl');
 
 const router = express.Router();
 
-router.post("/create", jwtCheck, checkScope('place:create'), async (req, res, next) => {
+router.post("/create", async (req, res, next) => {
   try {
-    const accessToken = req.headers.authorization.split(" ")[1];
-    const user = await getUserInfo(accessToken);
+    // const accessToken = req.headers.authorization.split(" ")[1];
+    // const user = await getUserInfo(accessToken);
     const placeData = req.body;
 
-    const newPlace = await CreateAbl(placeData, user.sub)
+    const newPlace = await CreateAbl(placeData)
 
     res.status(201).send(get_response("Place created", 201, newPlace))
 

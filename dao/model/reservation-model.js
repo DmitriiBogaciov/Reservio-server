@@ -17,6 +17,10 @@ const reservationSchema = new Schema({
         type: String,
         required: true
     },
+    password: {
+        type: String,
+        required: true
+    },
     startTime: {
         type: Date,
         index: true,

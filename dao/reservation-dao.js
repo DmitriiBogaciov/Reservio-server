@@ -10,7 +10,7 @@ class ReservationDao {
         }
     };
 
-    async UpdateOne(id, data) {
+    async FindByIdAndUpdate(id, data) {
         try {
             const options = {
                 returnDocument: "after"
@@ -35,17 +35,11 @@ class ReservationDao {
     async Find(filter, projection, options) {
         try {
             const result = await Reservation.find(filter, projection, options);
-            if (result.length === 0) {
-                const error = new Error("Didn't find any reservation");
-                error.status = 404;
-                throw error;
-            }
-
             return result;
         } catch (error) {
             throw error;
         }
-    };
+    }
 
     async FindOne(id) {
         try {
@@ -69,6 +63,21 @@ class ReservationDao {
             const result = await Reservation.deleteOne(filter);
             if (!result) {
                 const error = new Error("Can't delete reservation");
+                error.status = 404;
+                throw error;
+            }
+
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    async DeleteMany(filter) {
+        try {
+            const result = await Reservation.deleteMany(filter);
+            if (!result) {
+                const error = new Error("Can't delete reservations");
                 error.status = 404;
                 throw error;
             }

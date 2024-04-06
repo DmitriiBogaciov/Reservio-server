@@ -1,17 +1,17 @@
 const Ajv = require("ajv");
 const addFormats = require("ajv-formats");
-const PlaceSchema = require("../../api/validation-types/place-types");
-const PlaceDao = require("../../dao/place-dao");
-const dao = new PlaceDao();
+const IoTNodeSchema = require("../../api/validation-types/IoTNode-types");
+const IoTNodeDao = require("../../dao/IoTNode-dao");
+const dao = new IoTNodeDao();
 
 const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
 
-const validate = ajv.compile(PlaceSchema.updateDtoInType);
+const validate = ajv.compile(IoTNodeSchema.updateDtoInType);
 
-async function UpdateOneAbl(id, placeData) {
+async function UpdateOneAbl(id, IoTNodeData) {
     try {
-        const valid = validate(placeData);
+        const valid = validate(IoTNodeData);
         if (!valid) {
             const errorMessages = validate.errors.map(err => `${err.instancePath} ${err.message}`).join(', ');
             const error = new Error(`Validation failed: ${errorMessages}`);
@@ -19,7 +19,7 @@ async function UpdateOneAbl(id, placeData) {
             throw error;
         }
 
-        const result = await dao.FindByIdAndUpdate(id, placeData);
+        const result = await dao.FindByIdAndUpdate(id, IoTNodeData);
         return result;
 
     } catch (error) {

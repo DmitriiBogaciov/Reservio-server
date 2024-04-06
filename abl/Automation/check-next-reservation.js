@@ -19,18 +19,18 @@ async function CheckNextReservation(workspaces) {
         },
         {
             $lookup: {
-                from: 'iotnodes', // Название коллекции IoT устройств
+                from: 'iotnodes',
                 localField: 'IoTNodeId',
                 foreignField: '_id',
                 as: 'iotnode'
             }
         },
         {
-            $unwind: '$iotnode' // Преобразуем массив iotnode в отдельные документы
+            $unwind: '$iotnode'
         },
         {
             $addFields: {
-                deviceId: '$iotnode.deviceId' // Добавляем deviceId из документа IoTNode к каждому рабочему месту
+                deviceId: '$iotnode.deviceId'
             }
         },
         {
@@ -59,14 +59,13 @@ async function CheckNextReservation(workspaces) {
                 as: 'nextReservations'
             }
         },
-        // Теперь добавляем поле статуса на основе наличия предстоящих резерваций
         {
             $addFields: {
                 status: {
                     $cond: {
                         if: { $gt: [{ $size: "$nextReservations" }, 0] },
-                        then: 'red', // Если есть резервации, статус красный
-                        else: 'green' // Если нет, статус зеленый
+                        then: 'unavailable',
+                        else: 'available'
                     }
                 }
             }

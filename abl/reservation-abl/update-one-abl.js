@@ -19,9 +19,7 @@ async function UpdateOneAbl(id, reservationData) {
             throw error;
         }
 
-        const reservation = await dao.FindOne(id);
-
-        const result = await dao.UpdateOne(id, reservationData);
+        const result = await dao.FindByIdAndUpdate(id, reservationData);
         return result;
 
     } catch (error) {

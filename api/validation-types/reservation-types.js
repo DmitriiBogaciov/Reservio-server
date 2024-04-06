@@ -26,9 +26,9 @@ module.exports = {
     activateDtoInType: {
         type: "object",
         properties: {
-            id: { type: "string", minLength: 1, maxLength: 100 },
-            state: { type: "string", enum: ["activate", "deactivate"] }
+            password: { type: "string", minLength: 1, maxLength: 100 },
+            workspaceId: { type: "string", minLength: 1, maxLength: 100 }
         },
-        required: ["id", "state"]
+        required: ["password", "workspaceId"]
     }
 }

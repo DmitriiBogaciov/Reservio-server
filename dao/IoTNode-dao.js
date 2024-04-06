@@ -10,18 +10,18 @@ class PlaceDao {
         }
     };
 
-    // async UpdateOne(id, data) {
-    //     try {
-    //         const options = {
-    //             returnDocument: "after"
-    //         }
+    async FindByIdAndUpdate(id, data) {
+        try {
+            const options = {
+                returnDocument: "after"
+            }
 
-    //         const result = await Place.findByIdAndUpdate(id, data, options);
-    //         return result;
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // };
+            const result = await IoTNode.findByIdAndUpdate(id, data, options);
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    };
 
     async Find(filter, projection, options) {
         try {
@@ -52,23 +52,20 @@ class PlaceDao {
     //     }
     // };
 
-    // async DeleteOne(id) {
-    //     try {
-    //         const filter = {
-    //             _id: id
-    //         }
-    //         const result = await Place.deleteOne(filter);
-    //         if (!result) {
-    //             const error = new Error("Can't delete place");
-    //             error.status = 404;
-    //             throw error;
-    //         }
+    async DeleteOne(id) {
+        try {
+            const result = await IoTNode.findByIdAndDelete(id);
+            if (!result) {
+                const error = new Error("IoTNode not found");
+                error.status = 404;
+                throw error;
+            }
 
-    //         return result;
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // }
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 module.exports = PlaceDao;

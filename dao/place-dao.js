@@ -10,7 +10,7 @@ class PlaceDao {
         }
     };
 
-    async UpdateOne(id, data) {
+    async FindByIdAndUpdate(id, data) {
         try {
             const options = {
                 returnDocument: "after"

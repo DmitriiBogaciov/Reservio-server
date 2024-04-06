@@ -1,6 +1,6 @@
 const Workspace = require("../../dao/model/workspace-model");
-const CheckNextReservation = require("./check-next-reservation")
-const SetLedState = require("../IoTNode-abl/set-led-state-abl")
+const CheckNextReservation = require("./check-next-reservation");
+const SetLedState = require("../IoTNode-abl/set-led-state-abl");
 
 async function UpdateIndicator() {
     try {
@@ -20,18 +20,18 @@ async function UpdateIndicator() {
             },
             {
                 $lookup: {
-                    from: 'iotnodes', // Название коллекции IoT устройств
+                    from: 'iotnodes', 
                     localField: 'IoTNodeId',
                     foreignField: '_id',
                     as: 'iotnode'
                 }
             },
             {
-                $unwind: '$iotnode' // Преобразуем массив iotnode в отдельные документы
+                $unwind: '$iotnode'
             },
             {
                 $addFields: {
-                    deviceId: '$iotnode.deviceId' // Добавляем deviceId из документа IoTNode к каждому рабочему месту
+                    deviceId: '$iotnode.deviceId'
                 }
             },
             {
@@ -53,7 +53,7 @@ async function UpdateIndicator() {
                         {
                             $project: {
                                 _id: 1,
-                                active: 1 // Предполагается, что поле active указывает на статус резервации
+                                active: 1
                             }
                         }
                     ],
@@ -65,12 +65,12 @@ async function UpdateIndicator() {
                     status: {
                         $cond: {
                             if: { $eq: [{ $size: "$currentReservations" }, 0] },
-                            then: 'green', // нет текущих резерваций
+                            then: 'available',
                             else: {
                                 $cond: {
                                     if: { $anyElementTrue: "$currentReservations.active" },
-                                    then: 'blue', // есть активная резервация
-                                    else: 'red' // резервация есть, но она неактивна
+                                    then: 'occupied', 
+                                    else: 'unavailable'
                                 }
                             }
                         }
@@ -82,10 +82,11 @@ async function UpdateIndicator() {
         const workspacesWithCurrentReservations = [];
         const workspacesWithoutReservations = [];
 
+        console.log("Find:", workspacesWithReservationsAggregate);
+
         for (const workspace of workspacesWithReservationsAggregate) {
-            if (workspace.status === 'green') {
+            if (workspace.status === 'available') {
                 workspacesWithoutReservations.push(workspace);
-                console.log("There is a workspace without current reservation")
             } else {
                 workspacesWithCurrentReservations.push(workspace);
             }

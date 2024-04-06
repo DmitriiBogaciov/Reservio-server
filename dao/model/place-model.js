@@ -12,8 +12,7 @@ const placeSchema = new Schema({
     },
     owner: {
         type: String,
-        required: true,
-        index: true
+        required: false
     },
     category: {
         type: String,

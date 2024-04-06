@@ -9,7 +9,7 @@ addFormats(ajv);
 
 const validate = ajv.compile(PlaceSchema.createDtoInType)
 
-async function CreateAbl(placeData, owner) {
+async function CreateAbl(placeData) {
     try {
         const valid = validate(placeData);
         if (!valid) {
@@ -20,8 +20,7 @@ async function CreateAbl(placeData, owner) {
         }
 
         const data = {
-            ...placeData,
-            "owner": owner
+            ...placeData
         }
 
         const newPlace = await dao.Create(data);

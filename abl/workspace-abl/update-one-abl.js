@@ -19,9 +19,7 @@ async function UpdateOneAbl(id, workspaceData) {
             throw error;
         }
 
-        const workspace = await dao.FindOne(id);
-
-        const result = await dao.UpdateOne(id, workspaceData);
+        const result = await dao.FindByIdAndUpdate(id, workspaceData);
         return result;
 
     } catch (error) {

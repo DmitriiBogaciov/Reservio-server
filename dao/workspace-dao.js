@@ -10,13 +10,22 @@ class WorkspaceDao {
         }
     };
 
-    async UpdateOne(id, data) {
+    async FindByIdAndUpdate(id, data) {
         try {
             const options = {
                 returnDocument: "after"
             }
 
             const result = await Workspace.findByIdAndUpdate(id, data, options);
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    async UpdateMany(filter, data) {
+        try {
+            const result = await Workspace.updateMany(filter, data);
             return result;
         } catch (error) {
             throw error;
@@ -60,6 +69,21 @@ class WorkspaceDao {
             const result = await Workspace.deleteOne(filter);
             if (!result) {
                 const error = new Error("Can't delete Workspace");
+                error.status = 404;
+                throw error;
+            }
+
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async DeleteMany(filter) {
+        try {
+            const result = await Workspace.deleteMany(filter);
+            if (!result) {
+                const error = new Error("Can't delete Workspaces");
                 error.status = 404;
                 throw error;
             }
