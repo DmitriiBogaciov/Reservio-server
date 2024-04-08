@@ -1,4 +1,6 @@
 const express = require("express");
+const Busboy = require('busboy');
+const { BlobServiceClient } = require("@azure/storage-blob");
 
 const getUserInfo = require('../../utils/get-user-info');
 const get_response = require('../../utils/response-schema');
@@ -10,6 +12,9 @@ const UpdateOneAbl = require('../../abl/place-abl/update-one-abl');
 const FindAbl = require('../../abl/place-abl/find-abl');
 const FindOneAbl = require('../../abl/place-abl/find-one-abl');
 const DeleteOneAbl = require('../../abl/place-abl/delete-one-abl');
+
+const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION_STRING);
+const containerClient = blobServiceClient.getContainerClient(process.env.BLOB_PLACES);
 
 const router = express.Router();
 
@@ -75,6 +80,34 @@ router.delete("/deleteOne/:id", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+})
+
+router.post('/uploadImage', (req, res) => {
+  const busboy = Busboy({ headers: req.headers });
+
+  busboy.on ('file', async (fieldname, file, filename, encoding, mimetype) => {
+      console.log(`Uploading file: ${filename}`);
+
+      const blobName = Date.now() + '-' + filename;
+      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+      try {
+          await blockBlobClient.uploadStream(file);
+          const imageUrl = blockBlobClient.url;
+          console.log(`File uploaded to Azure Blob Storage: ${imageUrl}`);
+
+          res.send(get_response("File uploaded successfully", 200, imageUrl));
+      } catch (error) {
+          console.error(`Error uploading file to Azure Blob Storage: ${error.message}`);
+          res.status(500).send(get_response("Error uploading file", 200, error.message));
+      }
+  })
+
+  busboy.on('finish', () => {
+      console.log('Upload complete');
+  })
+
+  req.pipe(busboy);
 })
 
 module.exports = router;

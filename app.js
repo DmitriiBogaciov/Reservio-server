@@ -14,6 +14,7 @@ const placeRouter = require("./api/controllers/place-controller");
 const workspaceRouter = require("./api/controllers/workspace-controller");
 const reservationRouter = require("./api/controllers/reservation-controller");
 const IoTNodeRouter = require("./api/controllers/IoTNode-controller");
+const blobRouter = require("./api/controllers/blob-controller");
 
 const UpdateIndicator = require("./abl/Automation/update-indicator")
 
@@ -42,6 +43,7 @@ app.use('/place', placeRouter);
 app.use('/workspace', workspaceRouter);
 app.use('/reservation', reservationRouter);
 app.use('/iotnode', IoTNodeRouter);
+app.use('/blob', blobRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
