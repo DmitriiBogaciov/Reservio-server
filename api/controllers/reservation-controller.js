@@ -10,7 +10,8 @@ const ActivateAbl = require('../../abl/reservation-abl/activate-abl');
 const UpdateOneAbl = require('../../abl/reservation-abl/update-one-abl');
 const FindAbl = require('../../abl/reservation-abl/find-abl');
 const FindOneAbl = require('../../abl/reservation-abl/find-one-abl');
-const DeleteOneAbl = require('../../abl/reservation-abl/delete-one-abl')
+const DeleteOneAbl = require('../../abl/reservation-abl/delete-one-abl');
+const ExtendAbl = require("../../abl/reservation-abl/extend-abl");
 
 const router = express.Router();
 
@@ -95,6 +96,17 @@ router.delete("/deleteOne/:id", async (req, res, next) => {
     const result = await DeleteOneAbl(id);
 
     res.status(200).send(get_response("Reservation deleted", 200, result));
+  } catch (error) {
+    next(error);
+  }
+})
+
+router.post("/extend/:id", async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const result = await ExtendAbl(id);
+
+    res.status(200).send(get_response("Reservation extended", 200, result));
   } catch (error) {
     next(error);
   }

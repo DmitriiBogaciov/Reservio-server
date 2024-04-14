@@ -2,7 +2,7 @@ module.exports = {
     createDtoInType: {
         type: "object",
         properties: {
-            name: { type: "string", minLength: 1, maxLength: 100}
+            name: { type: "string", minLength: 1, maxLength: 100 }
         },
         required: ["name"]
     },
@@ -16,9 +16,9 @@ module.exports = {
             address: { type: "string" },
             owner: { type: "string" },
             category: { type: "string", minLength: 1, maxLength: 1000 },
-            features: { type: "array", items: { type: "string" }},
-            openingTime: { type: "string", format: "date-time" },
-            closingTime: { type: "string", format: "date-time" }
+            features: { type: "array", items: { type: "string" } },
+            openingTime: { "type": "string", "pattern": "^[0-2]?[0-9]:[0-5][0-9]$" },
+            closingTime: { "type": "string", "pattern": "^[0-2]?[0-9]:[0-5][0-9]$" }
         },
         required: []
     }

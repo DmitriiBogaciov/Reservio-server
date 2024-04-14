@@ -35,12 +35,12 @@ const placeSchema = new Schema({
         required: false
     },
     openingTime: {
-        type: Date,
+        type: String,
         required: false,
         index: true
     },
     closingTime: {
-        type: Date,
+        type: String,
         required: false,
         index: true
     }

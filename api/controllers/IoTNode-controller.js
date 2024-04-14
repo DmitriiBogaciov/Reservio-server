@@ -7,6 +7,7 @@ const CreateAbl = require("../../abl/IoTNode-abl/create-abl");
 const FindAbl = require("../../abl/IoTNode-abl/find-abl");
 const UpdateOneAbl = require("../../abl/IoTNode-abl/update-abl");
 const DeleteOneAbl = require("../../abl/IoTNode-abl/delete-one-abl");
+const UpdateIndicator = require("../../abl/IoTNode-abl/update-single-indicator")
 
 const router = express.Router();
 
@@ -54,6 +55,18 @@ router.post("/updateOne/:id", async (req, res, next) => {
     const updateData = req.body;
 
     const updatedNode = await UpdateOneAbl(id, updateData);
+
+    res.status(200).send(get_response("IoTNode updated", 200, updatedNode));
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/updateIndicator/:id", async (req, res, next) => {
+  try {
+    const id = req.params.id;
+
+    const updatedNode = await UpdateIndicator(id);
 
     res.status(200).send(get_response("IoTNode updated", 200, updatedNode));
   } catch (error) {

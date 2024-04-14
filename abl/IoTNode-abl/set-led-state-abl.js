@@ -13,7 +13,6 @@ async function SetLedState(targetDevice, state){
 
         dtoin = {
             ...state,
-            topic: "node/demo:0/led/-/state/set"
         }
 
         const data = JSON.stringify(dtoin);

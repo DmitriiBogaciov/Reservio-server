@@ -20,6 +20,11 @@ async function UpdateOneAbl(id, placeData) {
         }
 
         const result = await dao.FindByIdAndUpdate(id, placeData);
+        if(!result) {
+            const error = new Error("Place didn't find");
+            error.status = 400;
+            throw error;
+        }
         return result;
 
     } catch (error) {

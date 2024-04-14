@@ -1,5 +1,5 @@
 const Workspace = require("../../dao/model/workspace-model");
-const CheckNextReservation = require("./check-next-reservation");
+const CheckNextReservation = require("../reservation-abl/utils/check-next-reservation");
 const SetLedState = require("../IoTNode-abl/set-led-state-abl");
 
 async function UpdateIndicator() {
