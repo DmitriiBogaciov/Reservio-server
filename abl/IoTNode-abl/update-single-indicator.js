@@ -54,7 +54,7 @@ async function UpdateIndicator(deviceId) {
                         $cond: {
                             if: { $eq: [{ $size: "$currentReservations" }, 0] },
                             then: 'available',
-                            else: 'occupied'
+                            else: 'unavailable'
                         }
                     }
                 }
@@ -63,12 +63,21 @@ async function UpdateIndicator(deviceId) {
 
         let reservationWithNextReservation = [];
 
+        console.log(workspace[0])
+
         if(workspace[0].status === 'available' & currentMinutes > 1) {
             reservationWithNextReservation = await CheckNextReservation([workspace[0]])
             console.log(reservationWithNextReservation);
+        } else if (workspace[0].currentReservations[0].active) {
+            workspace[0].status = 'occupied'
+            reservationWithNextReservation = workspace;
+        } else{
+            reservationWithNextReservation = workspace;
         }
 
-        await SetLedState(reservationWithNextReservation[0].deviceId, { state: reservationWithNextReservation[0].status });
+        console.log(reservationWithNextReservation);
+        console.log(deviceId, { state: reservationWithNextReservation[0].status })
+        await SetLedState(deviceId, { state: reservationWithNextReservation[0].status });
 
         return (workspace)
         

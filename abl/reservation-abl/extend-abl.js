@@ -8,13 +8,14 @@ async function ExtendAbl(id) {
         // check time 
         const currentHour = new Date();
         const currentMinutes = currentHour.getMinutes();
-        // if ((59 - currentMinutes) > 5) {
+
+        const reservation = await dao.FindOne(id);
+
+        // if ((reservation.endTime - currentMinutes) > 5) {
         //     const error = new Error("Can't extend the reservation at this time");
         //     error.status = 400;
         //     throw error;
         // }
-
-        const reservation = await dao.FindOne(id);
 
         // check if is active
         if (!reservation.active) {

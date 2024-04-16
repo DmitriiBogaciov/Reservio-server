@@ -7,20 +7,23 @@ const UpdateOneAbl = require('../../abl/workspace-abl/update-one-abl');
 const FindAbl = require('../../abl/workspace-abl/find-abl');
 const FindOneAbl = require('../../abl/workspace-abl/find-one-abl');
 const DeleteOneAbl = require('../../abl/workspace-abl/delete-one-abl');
-const UpdateIndicator = require('../../abl/Automation/update-indicator')
+const UpdateIndicator = require('../../abl/Automation/update-indicator');
+const WorkspaceResExtend = require('../../abl/workspace-abl/workspace-reservation-extend');
 
 const router = express.Router();
 
-router.post("/state", async (req, res, next) => {
+router.post("/event", async (req, res, next) => {
   try {
-    if(req.body.event == "call"){
-        res.status(200).send(get_response("Call the receptionist", 200));
-    } else if(req.body.event == "extend"){
-        res.status(200).send(get_response("The reservation was extended", 200));
+    if (req.body.event == "call") {
+      res.status(200).send(get_response("Call the receptionist", 200));
+    } else if (req.body.event == "extend") {
+
+      const result = await WorkspaceResExtend(req.body.deviceId);
+      res.status(200).send(get_response("The reservation was extended", 200, result));
     }
   } catch (error) {
     next(error);
-  } 
+  }
 })
 
 router.post("/create", async (req, res, next) => {
@@ -32,7 +35,7 @@ router.post("/create", async (req, res, next) => {
 
   } catch (error) {
     next(error);
-  } 
+  }
 })
 
 router.post("/updateOne/:id", async (req, res, next) => {

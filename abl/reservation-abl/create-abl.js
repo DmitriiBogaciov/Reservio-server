@@ -1,6 +1,6 @@
 const Ajv = require("ajv");
 const addFormats = require("ajv-formats");
-const CheckAvailability = require("../reservation-abl/utils/check-availability");
+const CheckAvailability = require("./utils/check-workpace-availability");
 const ReservationSchema = require("../../api/validation-types/reservation-types");
 const CheckPlaceAvailability = require("./utils/check-place-availability");
 const ReservationDao = require('../../dao/reservation-dao');
@@ -78,9 +78,8 @@ async function CreateAbl(reservationData) {
             "password": password
         }
 
-        // const result = await dao.Create(newReservation);
-        // return result;
-        return newReservation;
+        const result = await dao.Create(newReservation);
+        return result;
 
     } catch (error) {
         error.status = error.status || 500;
