@@ -23,7 +23,7 @@ async function ActivateAbl(password, workspaceIdString) {
         }
 
         const res = await rDao.Find({ password: password });
-        const reservation = {}
+        let reservation = {}
         if(res.length !== 0) {
             reservation = res[0]
         } else {
@@ -59,8 +59,10 @@ async function ActivateAbl(password, workspaceIdString) {
             },
         ])
 
-        const workspace = {};
+        let workspace = {};
         if (foundWorkspace.length !== 0) {
+            workspace = foundWorkspace[0]
+        } else {
             const error = new Error("The workspace doesn't exist");
             error.status = 401; // Bad Request
             throw error;
