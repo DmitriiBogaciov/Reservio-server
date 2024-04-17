@@ -23,7 +23,14 @@ async function ActivateAbl(password, workspaceIdString) {
         }
 
         const res = await rDao.Find({ password: password });
-        const reservation = res[0];
+        const reservation = {}
+        if(res.length !== 0) {
+            reservation = res[0]
+        } else {
+            const error = new Error("The reservation doesn't exist");
+            error.status = 401; // Bad Request
+            throw error;
+        }
         
         
         const workspaceId = new mongoose.Types.ObjectId(workspaceIdString);
@@ -52,7 +59,12 @@ async function ActivateAbl(password, workspaceIdString) {
             },
         ])
 
-        const workspace = foundWorkspace[0];
+        const workspace = {};
+        if (foundWorkspace.length !== 0) {
+            const error = new Error("The workspace doesn't exist");
+            error.status = 401; // Bad Request
+            throw error;
+        }
 
         console.log("Find:", workspace)
 
