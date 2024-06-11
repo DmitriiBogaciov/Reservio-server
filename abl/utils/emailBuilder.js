@@ -2,7 +2,7 @@ const brevo = require("sib-api-v3-sdk");
 const defaultClient = brevo.ApiClient.instance;
 
 const apiKey = defaultClient.authentications['api-key'];
-apiKey.apiKey = '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'; 
+apiKey.apiKey = process.env.Sendinblue_API_Key; 
 
 const apiInstance = new brevo.TransactionalEmailsApi();
 
