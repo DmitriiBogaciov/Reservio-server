@@ -80,7 +80,7 @@ db.once('open', function () {
 });
 
 // This function updates workspace state and changes IoTNode led color
-cron.schedule('00, 10, 20, 30, 40, 50 * * * *', () => {
+cron.schedule('00,10,20,30,40,50 * * * *', () => {
   UpdateIndicator();
 });
 
