@@ -8,13 +8,12 @@ async function NotifyCompletion() {
     try {
         const currentTime = new Date();
 
-        const nextHour = new Date(currentTime);
-        nextHour.setHours(currentTime.getHours() + 1);
-        nextHour.setMinutes(0, 0, 0);
+        const nextFiveMinutes = new Date(currentTime);
+        nextFiveMinutes.setMinutes(currentTime.getMinutes() + 5);
 
         const filter = {
             active: true,
-            // endTime: { $gte: currentTime, $lt: nextHour }
+            endTime: { $gte: currentTime, $lt: nextFiveMinutes }
         };
 
         const projection = {
@@ -25,6 +24,11 @@ async function NotifyCompletion() {
             "name": 1
         };
         const completionReservations = await dao.Find(filter, projection);
+
+        if (completionReservations.length === 0) {
+            console.log("No reservations ending within the next hour.");
+            return "No reservations to notify.";
+        }
 
         const workspaceIds = completionReservations.map(res => res.workspace);
 

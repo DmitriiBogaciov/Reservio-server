@@ -15,11 +15,11 @@ async function ExtendAbl(id) {
         const endTime = new Date(reservation.endTime);
         const timeDifference = (endTime - currentTime) / (1000 * 60); // Difference in minutes
 
-        // if (timeDifference > 5) {
-        //     const error = new Error("Can't extend the reservation at this time");
-        //     error.status = 400;
-        //     throw error;
-        // }
+        if (timeDifference > 5) {
+            const error = new Error("Can't extend the reservation at this time");
+            error.status = 400;
+            throw error;
+        }
 
         // check if is active
         if (!reservation.active) {

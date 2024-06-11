@@ -16,7 +16,8 @@ const reservationRouter = require("./api/controllers/reservation-controller");
 const IoTNodeRouter = require("./api/controllers/IoTNode-controller");
 const blobRouter = require("./api/controllers/blob-controller");
 
-const UpdateIndicator = require("./abl/Automation/update-indicator")
+const UpdateIndicator = require("./abl/Automation/update-indicator");
+const NotifyCompletion = require("./abl/reservation-abl/notification-of-completion");
 
 var indexRouter = require('./routes/index');
 // var usersRouter = require('./routes/users');
@@ -78,10 +79,17 @@ db.once('open', function () {
   console.log('Connected to the database');
 });
 
-//This function updates workspace state and changes IoTNode led color
-// cron.schedule('*/10 * * * * *', () => {
-//   UpdateIndicatorAt00();
-// });
+// This function updates workspace state and changes IoTNode led color
+cron.schedule('30 * * * *', () => {
+  UpdateIndicator();
+});
 
+cron.schedule('55 * * * *', () => {
+  for (let i = 0; i < 3; i++) {
+    setTimeout(() => {
+      NotifyCompletion();
+    }, i * 60000); // 60000 миллисекунд = 1 минута
+  }
+});
 
 module.exports = app;
