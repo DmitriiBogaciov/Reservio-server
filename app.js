@@ -85,11 +85,11 @@ cron.schedule('00,10,20,30,40,50 * * * *', () => {
 });
 
 cron.schedule('55 * * * *', () => {
-  for (let i = 0; i < 3; i++) {
-    setTimeout(() => {
-      NotifyCompletion();
-    }, i * 60000); 
-  }
+    NotifyCompletion(1);
+});
+
+cron.schedule('56,57,58,59 * * * *', () => {
+  NotifyCompletion(2);
 });
 
 module.exports = app;

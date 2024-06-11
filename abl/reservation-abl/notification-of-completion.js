@@ -4,7 +4,7 @@ const Workspace = require("../../dao/model/workspace-model");
 const SetLedState = require("../IoTNode-abl/set-led-state-abl");
 const sendEmail = require("../utils/emailBuilder");
 
-async function NotifyCompletion() {
+async function NotifyCompletion(type) {
     try {
         const currentTime = new Date();
 
@@ -54,11 +54,12 @@ async function NotifyCompletion() {
                 await SetLedState(element.iotnode[0].deviceId, { state: "notify" });
             }
         }
-
-        for (const res of completionReservations) {
-            const subject = 'Reservation is ending';
-            const htmlContent = `<html><body><h1>Your reservation ${res.name} is ending</h1><p>Please extend or make room</p></body></html>`;
-            await sendEmail(res.user, subject, htmlContent);
+        if ( type == 1 ){
+            for (const res of completionReservations) {
+                const subject = 'Reservation is ending';
+                const htmlContent = `<html><body><h1>Your reservation ${res.name} is ending</h1><p>Please extend or make room</p></body></html>`;
+                await sendEmail(res.user, subject, htmlContent);
+            }
         }
 
         return ("Notified sucessfully");
