@@ -1,0 +1,67 @@
+const ReservationDao = require("../../dao/reservation-dao");
+const dao = new ReservationDao();
+const Workspace = require("../../dao/model/workspace-model");
+const SetLedState = require("../IoTNode-abl/set-led-state-abl");
+const sendEmail = require("../utils/emailBuilder");
+
+async function NotifyCompletion() {
+    try {
+        const currentTime = new Date();
+
+        const nextHour = new Date(currentTime);
+        nextHour.setHours(currentTime.getHours() + 1);
+        nextHour.setMinutes(0, 0, 0);
+
+        const filter = {
+            active: true,
+            // endTime: { $gte: currentTime, $lt: nextHour }
+        };
+
+        const projection = {
+            "_id": 1,
+            "endTime": 1,
+            "workspace": 1,
+            "user": 1,
+            "name": 1
+        };
+        const completionReservations = await dao.Find(filter, projection);
+
+        const workspaceIds = completionReservations.map(res => res.workspace);
+
+        const workspaces = await Workspace.aggregate([
+            {
+                $match: {
+                    IoTNodeId: { $exists: true, $ne: null },
+                    _id: { $in: workspaceIds }
+                }
+            },
+            {
+                $lookup: {
+                    from: 'iotnodes',
+                    localField: 'IoTNodeId',
+                    foreignField: "_id",
+                    as: 'iotnode'
+                }
+            }
+        ]);
+
+        for (const element of workspaces) {
+            if (element.iotnode && element.iotnode.length > 0) {
+                await SetLedState(element.iotnode[0].deviceId, { state: "notify" });
+            }
+        }
+
+        for (const res of completionReservations) {
+            const subject = 'Reservation is ending';
+            const htmlContent = `<html><body><h1>Your reservation ${res.name} is ending</h1><p>Please extend or make room</p></body></html>`;
+            await sendEmail(res.user, subject, htmlContent);
+        }
+
+        return ("Notified sucessfully");
+
+    } catch (error) {
+        console.error("Error in NotifyCompletion:", error);
+    }
+}
+
+module.exports = NotifyCompletion;

@@ -54,6 +54,8 @@ async function WorkspaceResExtend(deviceId){
 
         const ExtendedReservation = await ExtendRes(reservations[0]._id)
 
+        await SetLedState(deviceId, { state: "occupied" });
+
         return ExtendedReservation;
     } catch (error) {
         throw error;

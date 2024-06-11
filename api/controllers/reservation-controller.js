@@ -12,6 +12,7 @@ const FindAbl = require('../../abl/reservation-abl/find-abl');
 const FindOneAbl = require('../../abl/reservation-abl/find-one-abl');
 const DeleteOneAbl = require('../../abl/reservation-abl/delete-one-abl');
 const ExtendAbl = require("../../abl/reservation-abl/extend-abl");
+const Notify = require("../../abl/reservation-abl/notification-of-completion");
 
 const router = express.Router();
 
@@ -107,6 +108,16 @@ router.post("/extend/:id", async (req, res, next) => {
     const result = await ExtendAbl(id);
 
     res.status(200).send(get_response("Reservation extended", 200, result));
+  } catch (error) {
+    next(error);
+  }
+})
+
+router.post("/notify", async (req, res, next) => {
+  try {
+    const result = await Notify();
+
+    res.status(200).send(get_response("Notified", 200, result));
   } catch (error) {
     next(error);
   }

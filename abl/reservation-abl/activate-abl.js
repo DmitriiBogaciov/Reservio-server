@@ -57,7 +57,7 @@ async function ActivateAbl(password, workspaceIdString) {
                     preserveNullAndEmptyArrays: true
                 }
             },
-        ])
+        ]);
 
         let workspace = {};
         if (foundWorkspace.length !== 0) {
