@@ -10,7 +10,7 @@ async function sendEmail(to, subject, htmlContent) {
     const sendSmtpEmail = new brevo.SendSmtpEmail();
     sendSmtpEmail.subject = subject;
     sendSmtpEmail.htmlContent = htmlContent;
-    sendSmtpEmail.sender = { name: 'Dmitrii', email: 'dimon.989843@gmail.com' }; 
+    sendSmtpEmail.sender = { name: 'Reservio', email: 'dimon.989843@gmail.com' }; 
     sendSmtpEmail.to = [{ email: to, name: to }]; 
 
     try {
