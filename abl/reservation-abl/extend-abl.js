@@ -7,7 +7,7 @@ const SetLedState = require("../IoTNode-abl/set-led-state-abl");
 
 async function ExtendAbl(id) {
     let reservation;
-    let workspace = {};
+    let workspaceIot = {};
     try {
         // check time 
         const currentTime = new Date();
@@ -16,28 +16,6 @@ async function ExtendAbl(id) {
 
         const endTime = new Date(reservation.endTime);
         const timeDifference = (endTime - currentTime) / (1000 * 60); // Difference in minutes
-
-        if (timeDifference > 5) {
-            const error = new Error("Can't extend the reservation at this time");
-            error.status = 400;
-            throw error;
-        }
-
-        // check if is active
-        if (!reservation.active) {
-            const error = new Error("Can't extend the reservation if reservation is not active");
-            error.status = 402;
-            throw error;
-        }
-
-        //check workspace availability
-        const workspace = CheckNextReservation([reservation.workspace])
-
-        if (workspace.status === "unavailable") {
-            const error = new Error("Can't extend the reservation, workspace is occupied");
-            error.status = 403;
-            throw error;
-        }
 
         const foundWorkspace = await Workspace.aggregate([
             {
@@ -65,7 +43,30 @@ async function ExtendAbl(id) {
         ]);
 
         if (foundWorkspace.length !== 0) {
-            workspace = foundWorkspace[0]
+            workspaceIot = foundWorkspace[0]
+
+        if (timeDifference > 5) {
+            const error = new Error("Can't extend the reservation at this time");
+            error.status = 400;
+            throw error;
+        }
+
+        // check if is active
+        if (!reservation.active) {
+            const error = new Error("Can't extend the reservation if reservation is not active");
+            error.status = 402;
+            throw error;
+        }
+
+        //check workspace availability
+        const workspace = CheckNextReservation([reservation.workspace])
+
+        if (workspace.status === "unavailable") {
+            const error = new Error("Can't extend the reservation, workspace is occupied");
+            error.status = 403;
+            throw error;
+        }
+
         } else {
             const error = new Error("The workspace doesn't exist");
             error.status = 401; // Bad Request
@@ -83,8 +84,8 @@ async function ExtendAbl(id) {
 
         const extendedReservation = await dao.FindByIdAndUpdate(id, newTime);
 
-        if(workspace.deviceId) {
-            await SetLedState(workspace.deviceId, { state: "extended" });
+        if(workspaceIot.deviceId) {
+            await SetLedState(workspaceIot.deviceId, { state: "extended" });
         }
 
         const subject = 'Reservation Extended';
@@ -103,8 +104,8 @@ async function ExtendAbl(id) {
         return extendedReservation;
     } catch (error) {
 
-        if(workspace.deviceId) {
-            await SetLedState(workspace.deviceId, { state: "warning" });
+        if(workspaceIot.deviceId) {
+            await SetLedState(workspaceIot.deviceId, { state: "warning" });
         }
         // Send email about failed extension
         const subject = 'Failed to Extend Reservation';

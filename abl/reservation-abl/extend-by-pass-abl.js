@@ -48,11 +48,14 @@ async function ExtendByPassAbl(user, password) {
             },
         ]);
 
-        // if (timeDifference > 20) {
-        //     const error = new Error("Can't extend the reservation at this time");
-        //     error.status = 400;
-        //     throw error;
-        // }
+        if (foundWorkspace.length !== 0) {
+            workspaceIot = foundWorkspace[0]
+
+        if (timeDifference > 5) {
+            const error = new Error("Can't extend the reservation at this time");
+            error.status = 400;
+            throw error;
+        }
 
         // check if is active
         if (!reservation.active) {
@@ -72,8 +75,6 @@ async function ExtendByPassAbl(user, password) {
 
         // extend reservation
 
-        if (foundWorkspace.length !== 0) {
-            workspaceIot = foundWorkspace[0]
         } else {
             const error = new Error("The workspace doesn't exist");
             error.status = 401; // Bad Request
