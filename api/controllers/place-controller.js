@@ -40,7 +40,7 @@ router.post("/updateOne/:id", async (req, res, next) => {
 
     const updatedPlace = await UpdateOneAbl(id, updateData);
 
-    res.status(200).send(get_response("Reservation updated", 200, updatedPlace));
+    res.status(200).send(get_response("Place updated", 200, updatedPlace));
   } catch (error) {
     next(error);
   }
@@ -54,7 +54,7 @@ router.get("/findAll", async (req, res, next) => {
 
     const places = await FindAbl(filter, projection, options);
 
-    res.status(200).send(get_response("Reservations received", 200, places));
+    res.status(200).send(get_response("Places received", 200, places));
   } catch (error) {
     next(error);
   }
@@ -65,7 +65,7 @@ router.get("/findOne/:id", async (req, res, next) => {
     const id = req.params.id;
     const place = await FindOneAbl(id);
 
-    res.status(200).send(get_response("Reservation received", 200, place));
+    res.status(200).send(get_response("Place received", 200, place));
   } catch (error) {
     next(error);
   }
