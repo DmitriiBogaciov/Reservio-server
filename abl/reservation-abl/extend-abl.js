@@ -3,9 +3,12 @@ const dao = new ReservationDao();
 const Workspace = require("../../dao/model/workspace-model");
 const CheckNextReservation = require("./utils/check-next-reservation");
 const sendEmail = require("../utils/emailBuilder");
+const SetLedState = require("../IoTNode-abl/set-led-state-abl");
+const Workspace = require("../../dao/model/workspace-model");
 
 async function ExtendAbl(id) {
     let reservation;
+    let workspace = {};
     try {
         // check time 
         const currentTime = new Date();
@@ -37,6 +40,40 @@ async function ExtendAbl(id) {
             throw error;
         }
 
+        const foundWorkspace = await Workspace.aggregate([
+            {
+                $match: {
+                    _id: reservation.workspace
+                }
+            },
+            {
+                $lookup: {
+                    from: 'iotnodes',
+                    localField: 'IoTNodeId',
+                    foreignField: '_id',
+                    as: 'iotnode'
+                }
+            },
+            {
+                $unwind: '$iotnode'
+            },
+            {
+                $addFields: {
+                    deviceId: '$iotnode.deviceId',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+        ]);
+
+        if (foundWorkspace.length !== 0) {
+            workspace = foundWorkspace[0]
+        } else {
+            const error = new Error("The workspace doesn't exist");
+            error.status = 401; // Bad Request
+            throw error;
+        }
+
+
         // extend reservation
 
         // currentHour.setHours(currentHour.getHours() + 1)
@@ -46,6 +83,10 @@ async function ExtendAbl(id) {
         }
 
         const extendedReservation = await dao.FindByIdAndUpdate(id, newTime);
+
+        if(workspace.deviceId) {
+            await SetLedState(workspace.deviceId, { state: "extended" });
+        }
 
         const subject = 'Reservation Extended';
         const htmlContent = `
@@ -62,6 +103,10 @@ async function ExtendAbl(id) {
 
         return extendedReservation;
     } catch (error) {
+
+        if(workspace.deviceId) {
+            await SetLedState(workspace.deviceId, { state: "warning" });
+        }
         // Send email about failed extension
         const subject = 'Failed to Extend Reservation';
         const htmlContent = `

@@ -3,9 +3,11 @@ const dao = new ReservationDao();
 const Workspace = require("../../dao/model/workspace-model");
 const CheckNextReservation = require("./utils/check-next-reservation");
 const sendEmail = require("../utils/emailBuilder");
+const SetLedState = require("../IoTNode-abl/set-led-state-abl");
 
 async function ExtendByPassAbl(user, password) {
     let reservation;
+    let workspaceIot = {};
     try {
         // check time 
         const currentTime = new Date();
@@ -18,16 +20,14 @@ async function ExtendByPassAbl(user, password) {
         res = await dao.Find(filter);
         reservation = res[0]
 
-        console.log(reservation)
-''
         const endTime = new Date(reservation.endTime);
         const timeDifference = (endTime - currentTime) / (1000 * 60); // Difference in minutes
 
-        if (timeDifference > 20) {
-            const error = new Error("Can't extend the reservation at this time");
-            error.status = 400;
-            throw error;
-        }
+        // if (timeDifference > 20) {
+        //     const error = new Error("Can't extend the reservation at this time");
+        //     error.status = 400;
+        //     throw error;
+        // }
 
         // check if is active
         if (!reservation.active) {
@@ -47,11 +47,51 @@ async function ExtendByPassAbl(user, password) {
 
         // extend reservation
 
+
+        const foundWorkspace = await Workspace.aggregate([
+            {
+                $match: {
+                    _id: reservation.workspace
+                }
+            },
+            {
+                $lookup: {
+                    from: 'iotnodes',
+                    localField: 'IoTNodeId',
+                    foreignField: '_id',
+                    as: 'iotnode'
+                }
+            },
+            {
+                $unwind: '$iotnode'
+            },
+            {
+                $addFields: {
+                    deviceId: '$iotnode.deviceId',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+        ]);
+        console.log("found workspases", foundWorkspace)
+
+        if (foundWorkspace.length !== 0) {
+            workspaceIot = foundWorkspace[0]
+        } else {
+            const error = new Error("The workspace doesn't exist");
+            error.status = 401; // Bad Request
+            throw error;
+        }
+
         const newTime = {
             endTime: endTime.setHours(endTime.getHours() + 1)
         }
 
         const extendedReservation = await dao.FindByIdAndUpdate(reservation.id, newTime);
+
+        console.log(workspaceIot)
+        if(workspaceIot.deviceId) {
+            await SetLedState(workspaceIot.deviceId, { state: "extended" });
+        }
 
         const subject = 'Reservation Extended';
         const htmlContent = `
@@ -64,10 +104,16 @@ async function ExtendByPassAbl(user, password) {
                     <p>Your Company Name</p>
                 </body>
             </html>`;
-        // await sendEmail(reservation.user, subject, htmlContent);
+        await sendEmail(reservation.user, subject, htmlContent);
 
         return extendedReservation;
     } catch (error) {
+        console.log("before sending to iot")
+        console.log(workspaceIot)
+        if(workspaceIot.deviceId) {
+            console.log("sending to iot")
+            await SetLedState(workspaceIot.deviceId, { state: "warning" });
+        }
         // Send email about failed extension
         const subject = 'Failed to Extend Reservation';
         const htmlContent = `
@@ -81,7 +127,7 @@ async function ExtendByPassAbl(user, password) {
                     <p>Your Company Name</p>
                 </body>
             </html>`;
-        // await sendEmail(reservation.user, subject, htmlContent);
+        await sendEmail(reservation.user, subject, htmlContent);
 
         error.status = error.status || 500;
         throw error;
