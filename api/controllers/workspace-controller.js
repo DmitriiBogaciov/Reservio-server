@@ -51,7 +51,7 @@ router.post("/updateOne/:id", async (req, res, next) => {
   }
 })
 
-router.get("/findAll", async (req, res, next) => {
+router.post("/findAll", async (req, res, next) => {
   try {
     const filter = req.body.filter;
     const options = req.body.options;

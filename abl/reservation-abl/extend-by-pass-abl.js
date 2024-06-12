@@ -1,0 +1,91 @@
+const ReservationDao = require('../../dao/reservation-dao');
+const dao = new ReservationDao();
+const Workspace = require("../../dao/model/workspace-model");
+const CheckNextReservation = require("./utils/check-next-reservation");
+const sendEmail = require("../utils/emailBuilder");
+
+async function ExtendByPassAbl(user, password) {
+    let reservation;
+    try {
+        // check time 
+        const currentTime = new Date();
+
+        const filter = {
+            user: user,
+            password: password
+        }
+
+        res = await dao.Find(filter);
+        reservation = res[0]
+
+        console.log(reservation)
+''
+        const endTime = new Date(reservation.endTime);
+        const timeDifference = (endTime - currentTime) / (1000 * 60); // Difference in minutes
+
+        if (timeDifference > 20) {
+            const error = new Error("Can't extend the reservation at this time");
+            error.status = 400;
+            throw error;
+        }
+
+        // check if is active
+        if (!reservation.active) {
+            const error = new Error("Can't extend the reservation if reservation is not active");
+            error.status = 402;
+            throw error;
+        }
+
+        //check workspace availability
+        const workspace = CheckNextReservation([reservation.workspace])
+
+        if (workspace.status === "unavailable") {
+            const error = new Error("Can't extend the reservation, workspace is occupied");
+            error.status = 403;
+            throw error;
+        }
+
+        // extend reservation
+
+        const newTime = {
+            endTime: endTime.setHours(endTime.getHours() + 1)
+        }
+
+        const extendedReservation = await dao.FindByIdAndUpdate(reservation.id, newTime);
+
+        const subject = 'Reservation Extended';
+        const htmlContent = `
+            <html>
+                <body>
+                    <h1>Your reservation ${reservation.name} has been extended</h1>
+                    <p>Dear User,</p>
+                    <p>Your reservation has been successfully extended to ${newTime}.</p>
+                    <p>Best regards,</p>
+                    <p>Your Company Name</p>
+                </body>
+            </html>`;
+        // await sendEmail(reservation.user, subject, htmlContent);
+
+        return extendedReservation;
+    } catch (error) {
+        // Send email about failed extension
+        const subject = 'Failed to Extend Reservation';
+        const htmlContent = `
+            <html>
+                <body>
+                    <h1>Failed to extend your reservation ${reservation.name}</h1>
+                    <p>Dear User,</p>
+                    <p>Unfortunately, we could not extend your reservation due to the following reason:</p>
+                    <p><strong>${error.message}</strong></p>
+                    <p>Best regards,</p>
+                    <p>Your Company Name</p>
+                </body>
+            </html>`;
+        // await sendEmail(reservation.user, subject, htmlContent);
+
+        error.status = error.status || 500;
+        throw error;
+    }
+}
+
+module.exports = ExtendByPassAbl;

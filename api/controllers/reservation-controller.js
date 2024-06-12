@@ -12,6 +12,7 @@ const FindAbl = require('../../abl/reservation-abl/find-abl');
 const FindOneAbl = require('../../abl/reservation-abl/find-one-abl');
 const DeleteOneAbl = require('../../abl/reservation-abl/delete-one-abl');
 const ExtendAbl = require("../../abl/reservation-abl/extend-abl");
+const ExtendByPassAbl = require("../../abl/reservation-abl/extend-by-pass-abl")
 const Notify = require("../../abl/reservation-abl/notification-of-completion");
 
 const router = express.Router();
@@ -97,6 +98,19 @@ router.delete("/deleteOne/:id", async (req, res, next) => {
     const result = await DeleteOneAbl(id);
 
     res.status(200).send(get_response("Reservation deleted", 200, result));
+  } catch (error) {
+    next(error);
+  }
+})
+
+router.post("/extendByPass", async (req, res, next) => {
+  console.log('POST /extendByPass route hit');
+  try {
+    const user = req.body.user;
+    const password = req.body.password
+    const result = await ExtendByPassAbl(user, password);
+
+    res.status(200).send(get_response("Reservation extended", 200, result));
   } catch (error) {
     next(error);
   }

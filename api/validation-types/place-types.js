@@ -16,7 +16,7 @@ module.exports = {
             address: { type: "string" },
             owner: { type: "string" },
             category: { type: "string", minLength: 1, maxLength: 1000 },
-            features: { type: "array", items: { type: "string" } },
+            features: { type: "array", items: { type: "string", enum: ["wifi", "parking", "drink", "food"] } },
             openingTime: { "type": "string", "pattern": "^[0-2]?[0-9]:[0-5][0-9]$" },
             closingTime: { "type": "string", "pattern": "^[0-2]?[0-9]:[0-5][0-9]$" }
         },
