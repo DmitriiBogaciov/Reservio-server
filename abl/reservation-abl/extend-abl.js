@@ -4,7 +4,6 @@ const Workspace = require("../../dao/model/workspace-model");
 const CheckNextReservation = require("./utils/check-next-reservation");
 const sendEmail = require("../utils/emailBuilder");
 const SetLedState = require("../IoTNode-abl/set-led-state-abl");
-const Workspace = require("../../dao/model/workspace-model");
 
 async function ExtendAbl(id) {
     let reservation;

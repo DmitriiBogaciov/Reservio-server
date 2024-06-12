@@ -23,31 +23,6 @@ async function ExtendByPassAbl(user, password) {
         const endTime = new Date(reservation.endTime);
         const timeDifference = (endTime - currentTime) / (1000 * 60); // Difference in minutes
 
-        // if (timeDifference > 20) {
-        //     const error = new Error("Can't extend the reservation at this time");
-        //     error.status = 400;
-        //     throw error;
-        // }
-
-        // check if is active
-        if (!reservation.active) {
-            const error = new Error("Can't extend the reservation if reservation is not active");
-            error.status = 402;
-            throw error;
-        }
-
-        //check workspace availability
-        const workspace = CheckNextReservation([reservation.workspace])
-
-        if (workspace.status === "unavailable") {
-            const error = new Error("Can't extend the reservation, workspace is occupied");
-            error.status = 403;
-            throw error;
-        }
-
-        // extend reservation
-
-
         const foundWorkspace = await Workspace.aggregate([
             {
                 $match: {
@@ -72,7 +47,30 @@ async function ExtendByPassAbl(user, password) {
                 }
             },
         ]);
-        console.log("found workspases", foundWorkspace)
+
+        // if (timeDifference > 20) {
+        //     const error = new Error("Can't extend the reservation at this time");
+        //     error.status = 400;
+        //     throw error;
+        // }
+
+        // check if is active
+        if (!reservation.active) {
+            const error = new Error("Can't extend the reservation if reservation is not active");
+            error.status = 402;
+            throw error;
+        }
+
+        //check workspace availability
+        const workspace = CheckNextReservation([reservation.workspace])
+
+        if (workspace.status === "unavailable") {
+            const error = new Error("Can't extend the reservation, workspace is occupied");
+            error.status = 403;
+            throw error;
+        }
+
+        // extend reservation
 
         if (foundWorkspace.length !== 0) {
             workspaceIot = foundWorkspace[0]
@@ -88,7 +86,6 @@ async function ExtendByPassAbl(user, password) {
 
         const extendedReservation = await dao.FindByIdAndUpdate(reservation.id, newTime);
 
-        console.log(workspaceIot)
         if(workspaceIot.deviceId) {
             await SetLedState(workspaceIot.deviceId, { state: "extended" });
         }
